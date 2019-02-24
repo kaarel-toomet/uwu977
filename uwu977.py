@@ -42,7 +42,7 @@ screenw = screen.get_width()
 screenh = screen.get_height()
 ##
 pg.display.set_caption("movepic")
-screenBuffer = pg.Surface(size=(3*screenw, 3*screenh))
+screenBuffer = pg.Surface(size=(4*screenw, 4*screenh))
 screenBuffer.fill(bgColor)
 # this is the buffer where movement-related drawing is done,
 # afterwards it is copied to the screen
@@ -89,13 +89,13 @@ except:
     world = np.zeros((worldHeight, worldWidth), 'int8')
     iGround = int((1 - groundLevel)*worldHeight)
     world[iGround] = 3
-    world[iGround+1:] = 1
-    ## add redstuff and such
+    world[iGround+1:] = 5
+    ## add ores and such
     brThickness = worldHeight - iGround
-    nDiamond = np.random.binomial(brThickness*worldWidth, 0.02)
+    nDiamond = np.random.binomial(brThickness*worldWidth, 0.05)
     x = np.random.randint(0, worldWidth, size=nDiamond)
     y = np.random.randint(iGround + 1, worldHeight, size=nDiamond)
-    world[y,x] = 2
+    world[y,x] = 6
     ## where crazy hat has her home:
     homeX = int(worldWidth/2)
     homeY = max(iGround - 1, 0)
@@ -129,8 +129,8 @@ class Player(pg.sprite.Sprite):
         if mright:
             self.x = min(self.x + 1, worldWidth - 1)
         if world[self.y,self.x] in blocks.breakable:
-            world[self.y,self.x] = blocks.SKY
-            screenBuffer.blit( blocks.blocks[blocks.SKY], tc(self.x, self.y))
+            world[self.y,self.x] = blocks.breakto[world[self.y,self.x]]
+            screenBuffer.blit( blocks.blocks[blocks.breakto[world[self.y,self.x]]], tc(self.x, self.y))
         sx = screenw/2-hullmyts.getxy()[0]*f
         sy = screenh/2-hullmyts.getxy()[1]*f
         self.rect.x, self.rect.y = screenCoords(self.x, self.y)
@@ -177,7 +177,7 @@ while do:
             elif event.key == pg.K_h:
                 homeX = hullmyts.getxy()[0]
                 homeY = hullmyts.getxy()[1]
-            elif event.key == pg.K_RIGHTBRACKET and bb < 4:
+            elif event.key == pg.K_RIGHTBRACKET and bb < 10:
                 bb += 1
             elif event.key == pg.K_LEFTBRACKET and bb > 1:
                 bb -= 1
@@ -187,6 +187,10 @@ while do:
                 np.savez_compressed("world",
                                     world=world,
                                     home = np.array([homeX, homeY]))
+            elif event.key == pg.K_c:
+                xy=hullmyts.getxy()
+                world[xy[1],xy[0]] = 0
+                screenBuffer.blit( blocks.blocks[blocks.SKY], tc(xy[0],xy[1]))
         elif event.type == pg.KEYUP:
             if event.key == pg.K_UP:
                 mup = False
