@@ -39,6 +39,7 @@ It is tested with python3 3.6 only but may run with python 2 too:
 * python 3
 * pygame
 * numpy
+* gtk 3 (tested with gi 3.26)
 
 ## Issues
 
