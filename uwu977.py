@@ -68,15 +68,15 @@ gameover = False
 bb=1
 seehome = 0
 player = pg.sprite.Group()
-try:
-    s = np.load("world.npz")
+##
+s = files.loadWorld()
+if s is not None:
     world = s['world']
     homeX = s['home'][0]
     homeY = s['home'][1]
     worldWidth = world.shape[1]
     worldHeight = world.shape[0]
-    iGround = 5
-except:
+else:
     ## ---------- Build the world ----------
     ## variables
     worldWidth = args.width
