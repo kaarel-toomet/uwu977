@@ -8,9 +8,11 @@ import numpy as np
 parser = argparse.ArgumentParser(description='UWU977: Crazy Hat builds a world!')
 parser.add_argument('-v', type=int, default=0,
                     help='verbosity level')
-parser.add_argument('--width', type=int, default=30,
+parser.add_argument('-x', '--width', type=int, default=30,
+                    dest='width',
                     help='world width (tiles)')
-parser.add_argument('--height', type=int, default=10,
+parser.add_argument('-y', '--height', type=int, default=10,
+                    dest='height',
                     help='world height (tiles)')
 args = parser.parse_args()
 
