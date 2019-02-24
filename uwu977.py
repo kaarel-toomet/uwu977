@@ -6,8 +6,9 @@ pg.init()
 pg.mixer.init()
 i = pg.display.Info()
 print(i.current_w, i.current_h)
-pic = pg.transform.scale(pg.image.load("pic.png"),(64,64))
-block = pg.transform.scale(pg.image.load("asdfblock.png"),(64,64))
+f=64
+pic = pg.transform.scale(pg.image.load("pic.png"),(f,f))
+block = pg.transform.scale(pg.image.load("asdfblock.png"),(f,f))
 pg.font
 screen = pg.display.set_mode((0,0), pg.RESIZABLE)
 screenw = screen.get_width()
@@ -31,7 +32,9 @@ dfont = pg.font.SysFont("Times", 32)
 pfont = pg.font.SysFont("Times", 50)
 pause = False
 gameover = False
-player = pg.sprite.GroupSingle()
+sx=screenw/2
+sy=screenh/2
+player = pg.sprite.Group()
 world = np.array([[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
                   [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
                   [0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0],
@@ -49,7 +52,7 @@ world = np.array([[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
                   [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
                   [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]])
 def tc(x,y):
-    return(x*64,y*64)
+    return(x*f+sx,y*f+sy)
 class Player(pg.sprite.Sprite):
     def __init__(self,x,y):
         pg.sprite.Sprite.__init__(self)
@@ -60,6 +63,7 @@ class Player(pg.sprite.Sprite):
         self.rect.x = tc(x,y)[0]
         self.rect.y = tc(x,y)[1]
     def update(self, mup, mdown, mleft, mright):
+        global sx,sy,f
         d=0
         r=0
         s=world.shape
@@ -82,8 +86,12 @@ class Player(pg.sprite.Sprite):
             #self.x-=r
             #self.y-=d
         #print(self.x, self.y)
+        sx = screenw/2-hullmyts.getxy()[0]*f
+        sy = screenh/2-hullmyts.getxy()[1]*f
         self.rect.x = tc(self.x,self.y)[0]
         self.rect.y = tc(self.x,self.y)[1]
+    def getxy(self):
+        return(self.x,self.y)
 def reset():
     lifes = 5
     player.empty()
