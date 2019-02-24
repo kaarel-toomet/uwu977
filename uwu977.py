@@ -56,6 +56,8 @@ gameover = False
 sx=screenw/2
 sy=screenh/2
 bb=1
+bn={0:"air",1:"asdf",2:"redstuff",3:"ground"}
+seehome = 0
 player = pg.sprite.Group()
 ## ---------- Build the world ----------
 ## variables
@@ -74,13 +76,13 @@ world = np.zeros((worldHeight, worldWidth), 'int8')
 iGround = int((1 - groundLevel)*worldHeight)
 world[iGround] = 3
 world[iGround+1:] = 1
-## add diamonds and such
+## add redstuff and such
 brThickness = worldHeight - iGround
 nDiamond = np.random.binomial(brThickness*worldWidth, 0.02)
 x = np.random.randint(0, worldWidth, size=nDiamond)
 y = np.random.randint(iGround + 1, worldHeight, size=nDiamond)
 world[y,x] = 2
-## where carzy hat has her home:
+## where crazy hat has her home:
 homeX = int(worldWidth/2)
 homeY = max(iGround - 1, 0)
 ## ---------- world done ----------
@@ -168,6 +170,8 @@ while do:
                 bb += 1
             elif event.key == pg.K_LEFTBRACKET and bb > 1:
                 bb -= 1
+            elif event.key == pg.K_x:
+                seehome = 1-seehome
         elif event.type == pg.KEYUP:
             if event.key == pg.K_UP:
                 mup = False
@@ -213,7 +217,7 @@ while do:
                     gameover = False
                     reset()
     screen.fill((64,64,64))
-    score = ("Lifes: " + str(lifes))
+    score = ("Block: " + bn[bb])
     text = font.render(score, True, (255,255,255))
     text_rect = text.get_rect()
     text_rect.centerx = screen.get_rect().centerx
@@ -222,8 +226,8 @@ while do:
     for x in range(world.shape[0]):
         for y in range(world.shape[1]):
             screen.blit( blocks[ world[x,y] ], tc(y, x))
-
-    screen.blit(home,tc(homeX,homeY))
+    if seehome == 1:
+        screen.blit(home,tc(homeX,homeY))
     player.update(mup,mdown, mleft, mright)
     player.draw(screen)
     pg.display.update()
