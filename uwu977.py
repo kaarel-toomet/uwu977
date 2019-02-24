@@ -124,17 +124,24 @@ class Player(pg.sprite.Sprite):
         self.rect.x, self.rect.y = screenCoords(x, y)
     def update(self, mup, mdown, mleft, mright):
         global sx, sy, world
+        y = self.y
+        x = self.x
         if mup:
-            self.y = max(self.y - 1, 0)
+            y = max(self.y - 1, 0)
         if mdown:
-            self.y = min(self.y + 1, worldHeight - 1)
+            y = min(self.y + 1, worldHeight - 1)
         if mleft:
-            self.x = max(self.x - 1, 0)
+            x = max(self.x - 1, 0)
         if mright:
-            self.x = min(self.x + 1, worldWidth - 1)
-        if world[self.y,self.x] in blocks.breakable:
-            world[self.y,self.x] = blocks.breakto[world[self.y,self.x]]
-            screenBuffer.blit( blocks.blocks[blocks.breakto[world[self.y,self.x]]], tc(self.x, self.y))
+            x = min(self.x + 1, worldWidth - 1)
+        print(x, y, world[y,x])
+        if world[y,x] in blocks.breakable:
+            return
+        if world[y,x] in blocks.breakable:
+            world[y,x] = blocks.breakto[world[y,x]]
+            screenBuffer.blit( blocks.blocks[blocks.breakto[world[y,x]]], tc(x, y))
+        self.x = x
+        self.y = y
         sx = screenw/2-hullmyts.getxy()[0]*f
         sy = screenh/2-hullmyts.getxy()[1]*f
         self.rect.x, self.rect.y = screenCoords(self.x, self.y)
@@ -151,6 +158,10 @@ def build(x,y):
     if x>=0 and y>=0 and x<worldWidth and y<worldHeight:
         world[y,x] = bb
         screenBuffer.blit( blocks.blocks[bb], tc(x, y))
+def destroy(x,y):
+    if x>=0 and y>=0 and x<worldWidth and y<worldHeight:
+        world[y,x] = blocks.breakto[world[y,x]]
+        screenBuffer.blit( blocks.blocks[blocks.breakto[world[y,x]]], tc(x, y))
 # initialize player        
 reset()
 while do:
@@ -174,6 +185,14 @@ while do:
                 build(hullmyts.getxy()[0]+1,hullmyts.getxy()[1])
             elif event.key == pg.K_w:
                 build(hullmyts.getxy()[0],hullmyts.getxy()[1]-1)
+            elif event.key == pg.K_j:
+                destroy(hullmyts.getxy()[0]-1,hullmyts.getxy()[1])
+            elif event.key == pg.K_k:
+                destroy(hullmyts.getxy()[0],hullmyts.getxy()[1]+1)
+            elif event.key == pg.K_l:
+                destroy(hullmyts.getxy()[0]+1,hullmyts.getxy()[1])
+            elif event.key == pg.K_i:
+                destroy(hullmyts.getxy()[0],hullmyts.getxy()[1]-1)
             elif event.key == pg.K_p:
                 pause = True
             elif event.key == pg.K_r:
