@@ -135,9 +135,10 @@ def reset():
     player.add(hullmyts)
 def build(x,y):
     global bb
-    print("build")
     if x>=0 and y>=0 and x<worldWidth and y<worldHeight:
         world[y,x] = bb
+        screenBuffer.blit( blocks[bb], tc(x, y))
+# initialize player        
 reset()
 while do:
     for event in pg.event.get():
