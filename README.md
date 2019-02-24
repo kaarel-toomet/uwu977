@@ -1,2 +1,10 @@
 # uwu977
-tile based game thingy                                                                                                                                         
+
+## What it is
+
+tile based game thingy
+
+## Issues
+
+Currently the screen scaling does not work: I haven't found a good way
+to get screen DPI.
