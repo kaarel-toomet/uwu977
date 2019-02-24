@@ -5,6 +5,9 @@ SKY = 0
 BLOCK = 1
 RBLOCK = 2
 GROUND = 3
+BACKG = 4
+
+breakable = set([BLOCK, RBLOCK, GROUND])
 
 blocks = {}
 # initialize empty dictionary, to be filled with loadBlocks
@@ -22,7 +25,11 @@ def loadBlocks(size):
                              (size, size))
     ground = pg.transform.scale(pg.image.load("ground.png"),
                                 (size, size))
+    backg =pg.transform.scale(pg.image.load("asdfback.png"),
+                                (size, size))
     ## set up the blocks dictionary
-    blocks = { SKY:sky, BLOCK:block, RBLOCK:rblock, GROUND:ground }
-    bn={0:"air",1:"asdf",2:"redstuff",3:"ground"}
+    blocks = { SKY:sky, BLOCK:block, RBLOCK:rblock, GROUND:ground,
+               BACKG:backg }
+    bn={SKY:"sky",BLOCK:"asdf",RBLOCK:"redstuff",
+        GROUND:"ground",BACKG:"asdfbackground"}
 

@@ -127,8 +127,9 @@ class Player(pg.sprite.Sprite):
             self.x = max(self.x - 1, 0)
         if mright:
             self.x = min(self.x + 1, worldWidth - 1)
-        world[self.y,self.x] = 0
-        screenBuffer.blit( blocks.blocks[0], tc(self.x, self.y))
+        if world[self.y,self.x] in blocks.breakable:
+            world[self.y,self.x] = blocks.SKY
+            screenBuffer.blit( blocks.blocks[blocks.SKY], tc(self.x, self.y))
         sx = screenw/2-hullmyts.getxy()[0]*f
         sy = screenh/2-hullmyts.getxy()[1]*f
         self.rect.x, self.rect.y = screenCoords(self.x, self.y)
@@ -175,7 +176,7 @@ while do:
             elif event.key == pg.K_h:
                 homeX = hullmyts.getxy()[0]
                 homeY = hullmyts.getxy()[1]
-            elif event.key == pg.K_RIGHTBRACKET and bb < 3:
+            elif event.key == pg.K_RIGHTBRACKET and bb < 4:
                 bb += 1
             elif event.key == pg.K_LEFTBRACKET and bb > 1:
                 bb -= 1
