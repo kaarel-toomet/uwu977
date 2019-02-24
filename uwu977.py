@@ -67,26 +67,34 @@ gameover = False
 bb=1
 seehome = 0
 player = pg.sprite.Group()
-## ---------- Build the world ----------
-## variables
-worldWidth = args.width
-worldHeight = args.height
-groundLevel = 0.5
-# in fraction, from bottom.  0.3 means bottom 30%
-## sanity check
-worldHeight = min(max(worldHeight, 2), 400)
-worldWidth = min(max(worldWidth, 2), 2000)
-groundLevel = min(max(groundLevel, 0.0), 1.0)
-world = np.zeros((worldHeight, worldWidth), 'int8')
-iGround = int((1 - groundLevel)*worldHeight)
-world[iGround] = 3
-world[iGround+1:] = 1
-## add redstuff and such
-brThickness = worldHeight - iGround
-nDiamond = np.random.binomial(brThickness*worldWidth, 0.02)
-x = np.random.randint(0, worldWidth, size=nDiamond)
-y = np.random.randint(iGround + 1, worldHeight, size=nDiamond)
-world[y,x] = 2
+try:
+    world = np.loadtxt("world")
+    homeX = 0
+    homeY = 0
+    worldWidth = world.shape[1]
+    worldHeight = world.shape[0]
+    iGround = 5
+except:
+    ## ---------- Build the world ----------
+    ## variables
+    worldWidth = args.width
+    worldHeight = args.height
+    groundLevel = 0.5
+    # in fraction, from bottom.  0.3 means bottom 30%
+    ## sanity check
+    worldHeight = min(max(worldHeight, 2), 400)
+    worldWidth = min(max(worldWidth, 2), 2000)
+    groundLevel = min(max(groundLevel, 0.0), 1.0)
+    world = np.zeros((worldHeight, worldWidth), 'int8')
+    iGround = int((1 - groundLevel)*worldHeight)
+    world[iGround] = 3
+    world[iGround+1:] = 1
+    ## add redstuff and such
+    brThickness = worldHeight - iGround
+    nDiamond = np.random.binomial(brThickness*worldWidth, 0.02)
+    x = np.random.randint(0, worldWidth, size=nDiamond)
+    y = np.random.randint(iGround + 1, worldHeight, size=nDiamond)
+    world[y,x] = 2
 ## where crazy hat has her home:
 homeX = int(worldWidth/2)
 homeY = max(iGround - 1, 0)
@@ -99,8 +107,8 @@ for x in range(world.shape[0]):
 ## This will be done when copying the screen buffer on screen
 sx = screenw/2 - worldWidth*f/2
 sy = screenh/2 - worldHeight*f/2
-
 ## ---------- world done ----------
+
 class Player(pg.sprite.Sprite):
     def __init__(self,x,y):
         pg.sprite.Sprite.__init__(self)
@@ -173,6 +181,8 @@ while do:
                 bb -= 1
             elif event.key == pg.K_x:
                 seehome = 1-seehome
+            elif event.key == pg.K_z:
+                np.savetxt("world",world)
         elif event.type == pg.KEYUP:
             if event.key == pg.K_UP:
                 mup = False
