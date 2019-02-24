@@ -19,13 +19,17 @@ args = parser.parse_args()
 ## ---------- initialize ----------
 pg.init()
 pg.mixer.init()
+## ---------- blocks ----------
 f=64
+# block size on screen
 pic = pg.transform.scale(pg.image.load("pic.png"),(f,f))
 home = pg.transform.scale(pg.image.load("home.png"),(f,f))
 block = pg.transform.scale(pg.image.load("asdfblock.png"),(f,f))
 rblock = pg.transform.scale(pg.image.load("redblock.png"),(f,f))
 sky = pg.transform.scale(pg.image.load("sky.png"),(f,f))
 ground = pg.transform.scale(pg.image.load("ground.png"),(f,f))
+blocks = { 0:sky, 1:block, 2:rblock, 3:ground }
+##    
 pg.font
 screen = pg.display.set_mode((0,0), pg.RESIZABLE)
 screenw = screen.get_width()
@@ -68,8 +72,15 @@ if groundLevel > 1:
     groundLevel = 1.0
 world = np.zeros((worldHeight, worldWidth), 'int8')
 iGround = int((1 - groundLevel)*worldHeight)
-world[iGround:] = 1
-## where crzy hat has her home:
+world[iGround] = 3
+world[iGround+1:] = 1
+## add diamonds and such
+brThickness = worldHeight - iGround
+nDiamond = np.random.binomial(brThickness*worldWidth, 0.02)
+x = np.random.randint(0, worldWidth, size=nDiamond)
+y = np.random.randint(iGround + 1, worldHeight, size=nDiamond)
+world[y,x] = 2
+## where carzy hat has her home:
 homeX = int(worldWidth/2)
 homeY = max(iGround - 1, 0)
 ## ---------- world done ----------
@@ -210,14 +221,8 @@ while do:
     screen.blit(text,text_rect)
     for x in range(world.shape[0]):
         for y in range(world.shape[1]):
-            if world[x,y] == 0:
-                screen.blit(sky,tc(y,x))
-            elif world[x,y] == 1:
-                screen.blit(block,tc(y,x))
-            elif world[x,y] == 2:
-                screen.blit(rblock,tc(y,x))
-            elif world[x,y] == 3:
-                screen.blit(ground,tc(y,x))
+            screen.blit( blocks[ world[x,y] ], tc(y, x))
+
     screen.blit(home,tc(homeX,homeY))
     player.update(mup,mdown, mleft, mright)
     player.draw(screen)
