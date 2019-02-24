@@ -5,6 +5,7 @@ import random as r
 import numpy as np
 
 import blocks
+import files
 
 ## Command line arguments
 parser = argparse.ArgumentParser(description='UWU977: Crazy Hat builds a world!')
@@ -184,9 +185,7 @@ while do:
             elif event.key == pg.K_x:
                 seehome = 1-seehome
             elif event.key == pg.K_z:
-                np.savez_compressed("world",
-                                    world=world,
-                                    home = np.array([homeX, homeY]))
+                files.saveWorld(world, (homeX, homeY))
         elif event.type == pg.KEYUP:
             if event.key == pg.K_UP:
                 mup = False
