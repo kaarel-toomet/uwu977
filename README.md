@@ -14,8 +14,22 @@ It has various arguments, check `uwu977.py -h`.
 
 
 ## How to play
-arrow keys to move, ASDW to build, P to pause, H to set home, R to return home, [ or ] to change build block, X to toggle home visibility, Z to save world file
-(When starting the game, if there is a file named "world.npz", it loads the world, if there isnt, it doesn't create one until you save)
+
+When starting the game, it asks for the world to load.  Either choose
+one of the saved worlds, or press 'cancel' to create a new one.
+
+Keyboard:
+
+* arrow keys to move
+* **A**, **S**, **D**, **W** to build left, down, right, up
+* P to pause
+* H to set home
+* R to return home
+* [ or ] to change build block
+* X to toggle home visibility
+* **Z** to save world file.  It opens a dialog to ask for file name to
+  save.  Normally you want to save in a '.npz' file (numpy compressed
+  matrices).
 
 
 ## Requirements
