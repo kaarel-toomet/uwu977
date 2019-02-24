@@ -10,10 +10,10 @@ import blocks
 parser = argparse.ArgumentParser(description='UWU977: Crazy Hat builds a world!')
 parser.add_argument('-v', type=int, default=0,
                     help='verbosity level')
-parser.add_argument('-x', '--width', type=int, default=30,
+parser.add_argument('-x', '--width', type=int, default=64,
                     dest='width',        ##other useless comment
                     help='world width (tiles)')
-parser.add_argument('-y', '--height', type=int, default=10,
+parser.add_argument('-y', '--height', type=int, default=64,
                     dest='height',
                     help='world height (tiles)')
 args = parser.parse_args()
@@ -24,6 +24,7 @@ f=64
 blocks.loadBlocks(f)
 pic = pg.transform.scale(pg.image.load("pic.png"),(f,f))
 home = pg.transform.scale(pg.image.load("home.png"),(f,f))
+uwu = pg.transform.scale(pg.image.load("title.png"),(16*f,4*f))
 ##
 bgColor = (64,64,64)
 # dark gray
@@ -70,6 +71,7 @@ bb=1
 seehome = 0
 gmod = 0
 gmods = {0:"creative",1:"survival"}
+items = {0:923, 1:5, 2:0, 3:0, 4:0, 5:0, 6:0, 7:0, 8:0, 9:0, 10:0, 11:0}
 player = pg.sprite.Group()
 try:
     s = np.load("world.npz")
@@ -165,35 +167,41 @@ def build(x,y):
     if x>=0 and y>=0 and x<worldWidth and y<worldHeight:
         if world[y,x] in blocks.breakable:
             return
+        if gmod == 1:
+            if items[bb] <= 0:
+                return
+            items[bb] -= 1
         world[y,x] = bb
-        screenBuffer.blit( blocks.blocks[bb], tc(x, y))
+        screenBuffer.blit( blocks.blocks[bb], tc(x, y)) 
 def destroy(x,y):
     if x>=0 and y>=0 and x<worldWidth and y<worldHeight:
+        items[world[y,x]] += 1
         world[y,x] = blocks.breakto[world[y,x]]
         screenBuffer.blit( blocks.blocks[blocks.breakto[world[y,x]]], tc(x, y))
 # initialize player        
 reset()
-while title:
-    for event in pg.event.get():
-        if event.type == pg.QUIT:
-            title = False
-            do = False
-        elif event.type == pg.KEYDOWN:
-            if event.key == pg.K_s:
-                gmod = 1
-                title = False
-            elif event.key == pg.K_c:
-                gmod = 0
-                title = False
-    score = ("press C for creative mode, press S for survival(WIP)")
-    text = tfont.render(score, True, (0,255,0))
-    text_rect = text.get_rect()
-    text_rect.centerx = screen.get_rect().centerx
-    text_rect.y = screenh/2
-    screen.blit(text,text_rect)
-    pg.display.update()
                 
 while do:
+    while title:
+        for event in pg.event.get():
+            if event.type == pg.QUIT:
+                title = False
+                do = False
+            elif event.type == pg.KEYDOWN:
+                if event.key == pg.K_s:
+                    gmod = 1
+                    title = False
+                elif event.key == pg.K_c:
+                    gmod = 0
+                    title = False
+        score = ("press C for creative mode, press S for survival(WIP)")
+        text = tfont.render(score, True, (0,255,0))
+        text_rect = text.get_rect()
+        text_rect.centerx = screen.get_rect().centerx
+        text_rect.y = screenh/2
+        screen.blit(text,text_rect)
+        screen.blit(uwu,(screenw/2-f*8,screenh/4-f*2))
+        pg.display.update()
     for event in pg.event.get():
         if event.type == pg.QUIT:
             do = False
@@ -239,12 +247,15 @@ while do:
                 np.savez_compressed("world",
                                     world=world,
                                     home = np.array([homeX, homeY]))
-            elif event.key == pg.K_c:
+            elif event.key == pg.K_c and not world[hullmyts.getxy()[1],hullmyts.getxy()[0]] in blocks.breakable:
                 xy=hullmyts.getxy()
+                items[world[xy[1],xy[0]]] += 1
                 world[xy[1],xy[0]] = 0
                 screenBuffer.blit( blocks.blocks[blocks.SKY], tc(xy[0],xy[1]))
             elif event.key == pg.K_g:
                 gmod = 1-gmod
+            elif event.key == pg.K_t:
+                title = True
         elif event.type == pg.KEYUP:
             if event.key == pg.K_UP:
                 mup = False
@@ -294,7 +305,7 @@ while do:
     screen.blit(screenBuffer, (sx,sy))
     if seehome == 1:
         screen.blit(home, screenCoords(homeX,homeY))
-    score = ("Block: " + blocks.bn[bb] + ", gamemode:" + gmods[gmod])
+    score = ("Block: " + blocks.bn[bb] + "*" + str(items[bb]) + ", gamemode:" + gmods[gmod])
     text = font.render(score, True, (255,255,255))
     text_rect = text.get_rect()
     text_rect.centerx = screen.get_rect().centerx
