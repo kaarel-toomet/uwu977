@@ -9,7 +9,7 @@ parser = argparse.ArgumentParser(description='UWU977: Crazy Hat builds a world!'
 parser.add_argument('-v', type=int, default=0,
                     help='verbosity level')
 parser.add_argument('-x', '--width', type=int, default=30,
-                    dest='width',
+                    dest='width',        ##other useless comment
                     help='world width (tiles)')
 parser.add_argument('-y', '--height', type=int, default=10,
                     dest='height',
@@ -21,7 +21,11 @@ pg.init()
 pg.mixer.init()
 f=64
 pic = pg.transform.scale(pg.image.load("pic.png"),(f,f))
+home = pg.transform.scale(pg.image.load("home.png"),(f,f))
 block = pg.transform.scale(pg.image.load("asdfblock.png"),(f,f))
+rblock = pg.transform.scale(pg.image.load("redblock.png"),(f,f))
+sky = pg.transform.scale(pg.image.load("sky.png"),(f,f))
+ground = pg.transform.scale(pg.image.load("ground.png"),(f,f))
 pg.font
 screen = pg.display.set_mode((0,0), pg.RESIZABLE)
 screenw = screen.get_width()
@@ -47,6 +51,7 @@ pause = False
 gameover = False
 sx=screenw/2
 sy=screenh/2
+bb=1
 player = pg.sprite.Group()
 ## ---------- Build the world ----------
 ## variables
@@ -117,8 +122,9 @@ def reset():
 hullmyts = Player(homeX, homeY)
 player.add(hullmyts)
 def build(x,y):
+    global bb
     if x>=0 and y>=0 and x<worldWidth and y<worldHeight:
-        world[y,x] = 1
+        world[y,x] = bb
 while do:
     for event in pg.event.get():
         if event.type == pg.QUIT:
@@ -144,6 +150,13 @@ while do:
                 pause = True
             elif event.key == pg.K_r:
                 reset()
+            elif event.key == pg.K_h:
+                homeX = hullmyts.getxy()[0]
+                homeY = hullmyts.getxy()[1]
+            elif event.key == pg.K_RIGHTBRACKET and bb < 3:
+                bb += 1
+            elif event.key == pg.K_LEFTBRACKET and bb > 1:
+                bb -= 1
         elif event.type == pg.KEYUP:
             if event.key == pg.K_UP:
                 mup = False
@@ -188,7 +201,7 @@ while do:
                 if event.key == pg.K_r:
                     gameover = False
                     reset()
-    screen.fill((255,255,255))
+    screen.fill((64,64,64))
     score = ("Lifes: " + str(lifes))
     text = font.render(score, True, (255,255,255))
     text_rect = text.get_rect()
@@ -197,8 +210,15 @@ while do:
     screen.blit(text,text_rect)
     for x in range(world.shape[0]):
         for y in range(world.shape[1]):
-            if world[x,y] == 1:
+            if world[x,y] == 0:
+                screen.blit(sky,tc(y,x))
+            elif world[x,y] == 1:
                 screen.blit(block,tc(y,x))
+            elif world[x,y] == 2:
+                screen.blit(rblock,tc(y,x))
+            elif world[x,y] == 3:
+                screen.blit(ground,tc(y,x))
+    screen.blit(home,tc(homeX,homeY))
     player.update(mup,mdown, mleft, mright)
     player.draw(screen)
     pg.display.update()
