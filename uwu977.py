@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import pygame as pg
 import random as r
 import numpy as np
