@@ -5,6 +5,7 @@ import random as r
 import numpy as np
 
 import blocks
+import files
 
 ## Command line arguments
 parser = argparse.ArgumentParser(description='UWU977: Crazy Hat builds a world!')
@@ -73,15 +74,15 @@ gmod = 0
 gmods = {0:"creative",1:"survival"}
 items = {0:923, 1:5, 2:0, 3:0, 4:0, 5:0, 6:0, 7:0, 8:0, 9:0, 10:0, 11:0}
 player = pg.sprite.Group()
-try:
-    s = np.load("world.npz")
+##
+s = files.loadWorld()
+if s is not None:
     world = s['world']
     homeX = s['home'][0]
     homeY = s['home'][1]
     worldWidth = world.shape[1]
     worldHeight = world.shape[0]
-    iGround = 5
-except:
+else:
     ## ---------- Build the world ----------
     ## variables
     worldWidth = args.width
@@ -244,9 +245,7 @@ while do:
             elif event.key == pg.K_x:
                 seehome = 1-seehome
             elif event.key == pg.K_z:
-                np.savez_compressed("world",
-                                    world=world,
-                                    home = np.array([homeX, homeY]))
+                files.saveWorld(world, (homeX, homeY))
             elif event.key == pg.K_c and not world[hullmyts.getxy()[1],hullmyts.getxy()[0]] in blocks.breakable:
                 xy=hullmyts.getxy()
                 items[world[xy[1],xy[0]]] += 1
