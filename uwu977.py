@@ -1,11 +1,24 @@
 #!/usr/bin/env python3
+import argparse
 import pygame as pg
 import random as r
 import numpy as np
+
+## Command line arguments
+parser = argparse.ArgumentParser(description='UWU977: Crazy Hat builds a world!')
+parser.add_argument('-v', type=int, default=0,
+                    help='verbosity level')
+parser.add_argument('-x', '--width', type=int, default=30,
+                    dest='width',
+                    help='world width (tiles)')
+parser.add_argument('-y', '--height', type=int, default=10,
+                    dest='height',
+                    help='world height (tiles)')
+args = parser.parse_args()
+
+## ---------- initialize ----------
 pg.init()
 pg.mixer.init()
-i = pg.display.Info()
-print(i.current_w, i.current_h)
 f=64
 pic = pg.transform.scale(pg.image.load("pic.png"),(f,f))
 block = pg.transform.scale(pg.image.load("asdfblock.png"),(f,f))
@@ -35,22 +48,26 @@ gameover = False
 sx=screenw/2
 sy=screenh/2
 player = pg.sprite.Group()
-world = np.array([[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-                  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-                  [0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0],
-                  [0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0],
-                  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-                  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-                  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-                  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-                  [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-                  [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-                  [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-                  [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-                  [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-                  [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-                  [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-                  [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]])
+## ---------- Build the world ----------
+## variables
+worldWidth = args.width
+worldHeight = args.height
+groundLevel = 0.5
+# in fraction, from bottom.  0.3 means bottom 30%
+## sanity check
+worldHeight = min(max(worldHeight, 2), 400)
+worldWidth = min(max(worldWidth, 2), 2000)
+if groundLevel < 0:
+    groundLevel = 0
+if groundLevel > 1:
+    groundLevel = 1.0
+world = np.zeros((worldHeight, worldWidth), 'int8')
+iGround = int((1 - groundLevel)*worldHeight)
+world[iGround:] = 1
+## where crzy hat has her home:
+homeX = int(worldWidth/2)
+homeY = max(iGround - 1, 0)
+## ---------- world done ----------
 def tc(x,y):
     return(x*f+sx,y*f+sy)
 class Player(pg.sprite.Sprite):
@@ -66,7 +83,6 @@ class Player(pg.sprite.Sprite):
         global sx,sy,f
         d=0
         r=0
-        s=world.shape
         if mup:
             d=-1
         if mdown:
@@ -79,7 +95,7 @@ class Player(pg.sprite.Sprite):
             r=1
         self.x+=r
         self.y+=d
-        if self.x<0 or self.y<0 or self.x>s[0]-1 or self.y>s[1]-1:# or world[self.y,self.x]==1:
+        if self.x<0 or self.y<0 or self.x >= worldWidth or self.y >= worldHeight: # or world[self.y,self.x]==1:
             self.x-=r
             self.y-=d
         world[self.y,self.x] = 0
@@ -95,9 +111,9 @@ class Player(pg.sprite.Sprite):
 def reset():
     lifes = 5
     player.empty()
-    hullmyts = Player(0,0)
+    hullmyts = Player(homeX, homeY)
     player.add(hullmyts)
-hullmyts = Player(0,0)
+hullmyts = Player(homeX, homeY)
 player.add(hullmyts)
 def build(x,y):
     s=world.shape

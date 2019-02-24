@@ -4,6 +4,23 @@
 
 tile based game thingy
 
+## Starting
+
+Command line:
+
+`uwu977.py`
+
+It has various arguments, check `uwu977.py -h`.
+
+
+## Requirements
+
+It is tested with python3 3.6 only but may run with python 2 too:
+
+* python 3
+* pygame
+* numpy
+
 ## Issues
 
 Currently the screen scaling does not work: I haven't found a good way
