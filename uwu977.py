@@ -4,6 +4,8 @@ import random as r
 import numpy as np
 pg.init()
 pg.mixer.init()
+i = pg.display.Info()
+print(i.current_w, i.current_h)
 pic = pg.transform.scale(pg.image.load("pic.png"),(64,64))
 block = pg.transform.scale(pg.image.load("asdfblock.png"),(64,64))
 pg.font
