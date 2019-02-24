@@ -1,7 +1,20 @@
 #!/usr/bin/env python3
+import argparse
 import pygame as pg
 import random as r
 import numpy as np
+
+## Command line arguments
+parser = argparse.ArgumentParser(description='UWU977: Crazy Hat builds a world!')
+parser.add_argument('-v', type=int, default=0,
+                    help='verbosity level')
+parser.add_argument('--width', type=int, default=30,
+                    help='world width (tiles)')
+parser.add_argument('--height', type=int, default=10,
+                    help='world height (tiles)')
+args = parser.parse_args()
+
+## ---------- initialize ----------
 pg.init()
 pg.mixer.init()
 f=64
@@ -35,8 +48,8 @@ sy=screenh/2
 player = pg.sprite.Group()
 ## ---------- Build the world ----------
 ## variables
-worldWidth = 18
-worldHeight = 7
+worldWidth = args.width
+worldHeight = args.height
 groundLevel = 0.5
 # in fraction, from bottom.  0.3 means bottom 30%
 ## sanity check
