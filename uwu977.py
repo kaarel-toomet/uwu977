@@ -35,22 +35,29 @@ gameover = False
 sx=screenw/2
 sy=screenh/2
 player = pg.sprite.Group()
-world = np.array([[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-                  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-                  [0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0],
-                  [0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0],
-                  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-                  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-                  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-                  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-                  [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-                  [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-                  [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-                  [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-                  [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-                  [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-                  [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-                  [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]])
+## ---------- Build the world ----------
+## variables
+worldWidth = 10
+worldHeight = 5
+groundLevel = 0.5
+# in fraction, from bottom.  0.3 means bottom 30%
+## sanity check
+if worldHeight < 2:
+    worldHeight = 2
+if worldWidth < 2:
+    worldWidth = 2
+if worldHeight > 500:
+    worldHeight = 1000
+if worldWidth > 2000:
+    worldHeight = 2000
+if groundLevel < 0:
+    groundLevel = 0
+if groundLevel > 1:
+    groundLevel = 1.0
+world = np.zeros((worldHeight, worldWidth), 'int8')
+iGround = int((1 - groundLevel)*worldHeight)
+world[iGround:] = 1
+## ---------- world done ----------
 def tc(x,y):
     return(x*f+sx,y*f+sy)
 class Player(pg.sprite.Sprite):
@@ -66,7 +73,6 @@ class Player(pg.sprite.Sprite):
         global sx,sy,f
         d=0
         r=0
-        s=world.shape
         if mup:
             d=-1
         if mdown:
@@ -79,7 +85,7 @@ class Player(pg.sprite.Sprite):
             r=1
         self.x+=r
         self.y+=d
-        if self.x<0 or self.y<0 or self.x>s[0]-1 or self.y>s[1]-1:# or world[self.y,self.x]==1:
+        if self.x<0 or self.y<0 or self.x >= worldWidth or self.y >= worldHeight: # or world[self.y,self.x]==1:
             self.x-=r
             self.y-=d
         world[self.y,self.x] = 0
