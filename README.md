@@ -14,8 +14,11 @@ It has various arguments, check `uwu977.py -h`.
 
 
 ## How to play
-arrow keys to move, ASDW to build, P to pause, H to set home, R to return home, [ or ] to change build block, X to toggle home visibility, Z to save world file, IJKL to break
-(When starting the game, if there is a file named "world.npz", it loads the world, if there isnt, it doesn't create one until you save)
+arrow keys to move, ASDW to build, P to pause, H to set home, R to return home,
+ [ or ] to choose build block, X to toggle home visibility, Z to save world file,
+ IJKL to break, C to break wall/background, G to switch gamemode
+
+note:world has to be named "world.npz" to load
 
 
 ## Requirements

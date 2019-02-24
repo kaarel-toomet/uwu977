@@ -47,6 +47,7 @@ screenBuffer.fill(bgColor)
 # this is the buffer where movement-related drawing is done,
 # afterwards it is copied to the screen
 do = True
+title = True
 dist = 1
 actuallyuselessvariable = 39
 up = True
@@ -62,10 +63,13 @@ lifes = 5
 font = pg.font.SysFont("Times", 24)
 dfont = pg.font.SysFont("Times", 32)
 pfont = pg.font.SysFont("Times", 50)
+tfont = pg.font.SysFont("Times",100)
 pause = False
 gameover = False
 bb=1
 seehome = 0
+gmod = 0
+gmods = {0:"creative",1:"survival"}
 player = pg.sprite.Group()
 try:
     s = np.load("world.npz")
@@ -123,9 +127,13 @@ class Player(pg.sprite.Sprite):
         self.y=y
         self.rect.x, self.rect.y = screenCoords(x, y)
     def update(self, mup, mdown, mleft, mright):
-        global sx, sy, world
+        global sx, sy, world, gmod
         y = self.y
         x = self.x
+        if world[y,x] == blocks.SKY and gmod == 1:
+            mup = False
+            if world[y+1,x] == blocks.SKY:
+                mdown = True
         if mup:
             y = max(self.y - 1, 0)
         if mdown:
@@ -134,7 +142,6 @@ class Player(pg.sprite.Sprite):
             x = max(self.x - 1, 0)
         if mright:
             x = min(self.x + 1, worldWidth - 1)
-        print(x, y, world[y,x])
         if world[y,x] in blocks.breakable:
             return
         if world[y,x] in blocks.breakable:
@@ -156,6 +163,8 @@ def reset():
 def build(x,y):
     global bb
     if x>=0 and y>=0 and x<worldWidth and y<worldHeight:
+        if world[y,x] in blocks.breakable:
+            return
         world[y,x] = bb
         screenBuffer.blit( blocks.blocks[bb], tc(x, y))
 def destroy(x,y):
@@ -164,6 +173,26 @@ def destroy(x,y):
         screenBuffer.blit( blocks.blocks[blocks.breakto[world[y,x]]], tc(x, y))
 # initialize player        
 reset()
+while title:
+    for event in pg.event.get():
+        if event.type == pg.QUIT:
+            title = False
+            do = False
+        elif event.type == pg.KEYDOWN:
+            if event.key == pg.K_s:
+                gmod = 1
+                title = False
+            elif event.key == pg.K_c:
+                gmod = 0
+                title = False
+    score = ("press C for creative mode, press S for survival(WIP)")
+    text = tfont.render(score, True, (0,255,0))
+    text_rect = text.get_rect()
+    text_rect.centerx = screen.get_rect().centerx
+    text_rect.y = screenh/2
+    screen.blit(text,text_rect)
+    pg.display.update()
+                
 while do:
     for event in pg.event.get():
         if event.type == pg.QUIT:
@@ -214,6 +243,8 @@ while do:
                 xy=hullmyts.getxy()
                 world[xy[1],xy[0]] = 0
                 screenBuffer.blit( blocks.blocks[blocks.SKY], tc(xy[0],xy[1]))
+            elif event.key == pg.K_g:
+                gmod = 1-gmod
         elif event.type == pg.KEYUP:
             if event.key == pg.K_UP:
                 mup = False
@@ -263,7 +294,7 @@ while do:
     screen.blit(screenBuffer, (sx,sy))
     if seehome == 1:
         screen.blit(home, screenCoords(homeX,homeY))
-    score = ("Block: " + blocks.bn[bb])
+    score = ("Block: " + blocks.bn[bb] + ", gamemode:" + gmods[gmod])
     text = font.render(score, True, (255,255,255))
     text_rect = text.get_rect()
     text_rect.centerx = screen.get_rect().centerx
