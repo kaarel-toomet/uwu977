@@ -15,7 +15,7 @@ It has various arguments, check `uwu977.py -h`.
 
 ## How to play
 arrow keys to move, ASDW to build, P to pause, H to set home, R to return home, [ or ] to change build block, X to toggle home visibility, Z to save world file
-(When starting the game, if there is no file named "world.npz", it creates one)
+(When starting the game, if there is a file named "world.npz", it loads the world, if there isnt, it doesn't create one until you save)
 
 
 ## Requirements

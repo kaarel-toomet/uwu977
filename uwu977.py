@@ -41,7 +41,7 @@ screen = pg.display.set_mode((0,0), pg.RESIZABLE)
 screenw = screen.get_width()
 screenh = screen.get_height()
 ##
-pg.display.set_caption("movepic")
+pg.display.set_caption(str(r.randint(0,9000)))
 screenBuffer = pg.Surface(size=(4*screenw, 4*screenh))
 screenBuffer.fill(bgColor)
 # this is the buffer where movement-related drawing is done,
@@ -92,10 +92,14 @@ except:
     world[iGround+1:] = 5
     ## add ores and such
     brThickness = worldHeight - iGround
-    nDiamond = np.random.binomial(brThickness*worldWidth, 0.05)
-    x = np.random.randint(0, worldWidth, size=nDiamond)
-    y = np.random.randint(iGround + 1, worldHeight, size=nDiamond)
+    nCoal = np.random.binomial(brThickness*worldWidth, 0.05)
+    x = np.random.randint(0, worldWidth, size=nCoal)
+    y = np.random.randint(iGround + 1, worldHeight, size=nCoal)
     world[y,x] = 6
+    nGold = np.random.binomial(brThickness*worldWidth, 0.02)
+    x = np.random.randint(0, worldWidth, size=nGold)
+    y = np.random.randint(iGround + 1, worldHeight, size=nGold)
+    world[y,x] = 11
     ## where crazy hat has her home:
     homeX = int(worldWidth/2)
     homeY = max(iGround - 1, 0)
@@ -177,7 +181,7 @@ while do:
             elif event.key == pg.K_h:
                 homeX = hullmyts.getxy()[0]
                 homeY = hullmyts.getxy()[1]
-            elif event.key == pg.K_RIGHTBRACKET and bb < 10:
+            elif event.key == pg.K_RIGHTBRACKET and bb < 11:
                 bb += 1
             elif event.key == pg.K_LEFTBRACKET and bb > 1:
                 bb -= 1
