@@ -74,7 +74,13 @@ world = np.zeros((worldHeight, worldWidth), 'int8')
 iGround = int((1 - groundLevel)*worldHeight)
 world[iGround] = 3
 world[iGround+1:] = 1
-## where crzy hat has her home:
+## add diamonds and such
+brThickness = worldHeight - iGround
+nDiamond = np.random.binomial(brThickness*worldWidth, 0.02)
+x = np.random.randint(0, worldWidth, size=nDiamond)
+y = np.random.randint(iGround + 1, worldHeight, size=nDiamond)
+world[y,x] = 2
+## where carzy hat has her home:
 homeX = int(worldWidth/2)
 homeY = max(iGround - 1, 0)
 ## ---------- world done ----------
