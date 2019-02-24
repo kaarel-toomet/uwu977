@@ -12,6 +12,7 @@ screenh = screen.get_height()
 pg.display.set_caption("movepic")
 do = True
 dist = 1
+actuallyuselessvariable = 39
 up = True
 down = True
 left = True
@@ -28,10 +29,22 @@ pfont = pg.font.SysFont("Times", 50)
 pause = False
 gameover = False
 player = pg.sprite.GroupSingle()
-world = np.array([[0,0,0,0,0,0,0,0],
-                  [1,0,1,1,0,0,1,1],
-                  [1,1,0,0,0,1,0,0],
-                  [0,0,0,1,0,0,0,1]])
+world = np.array([[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                  [0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0],
+                  [0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0],
+                  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                  [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+                  [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+                  [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+                  [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+                  [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+                  [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+                  [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+                  [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]])
 def tc(x,y):
     return(x*64,y*64)
 class Player(pg.sprite.Sprite):
@@ -46,12 +59,10 @@ class Player(pg.sprite.Sprite):
     def update(self, mup, mdown, mleft, mright):
         d=0
         r=0
+        s=world.shape
         if mup:
-            #if self.y > 0:
-            d=-1#    self.y -= 1
+            d=-1
         if mdown:
-            #if self.y < 
-            #
             d=-1
         if mdown:
             d=1
@@ -61,13 +72,12 @@ class Player(pg.sprite.Sprite):
             r=1
         self.x+=r
         self.y+=d
-        try:
-            if self.x<0 or self.y<0 or world[self.y,self.x]==1:
-                self.x-=r
-                self.y-=d
-        except:
+        if self.x<0 or self.y<0 or self.x>s[0]-1 or self.y>s[1]-1:# or world[self.y,self.x]==1:
             self.x-=r
             self.y-=d
+        world[self.y,self.x] = 0
+            #self.x-=r
+            #self.y-=d
         #print(self.x, self.y)
         self.rect.x = tc(self.x,self.y)[0]
         self.rect.y = tc(self.x,self.y)[1]
@@ -84,7 +94,7 @@ while do:
             do = False
         elif event.type == pg.KEYDOWN:
             if event.key == pg.K_UP:
-                mup = True
+                mup = True  #useless comment
             elif event.key == pg.K_DOWN:
                 mdown = True
             elif event.key == pg.K_LEFT:
