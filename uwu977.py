@@ -37,8 +37,8 @@ sy=screenh/2
 player = pg.sprite.Group()
 ## ---------- Build the world ----------
 ## variables
-worldWidth = 10
-worldHeight = 5
+worldWidth = 15
+worldHeight = 8
 groundLevel = 0.5
 # in fraction, from bottom.  0.3 means bottom 30%
 ## sanity check
@@ -57,6 +57,9 @@ if groundLevel > 1:
 world = np.zeros((worldHeight, worldWidth), 'int8')
 iGround = int((1 - groundLevel)*worldHeight)
 world[iGround:] = 1
+## where crzy hat has her home:
+homeX = max(iGround - 1, 0)
+homeY = int(worldWidth/2)
 ## ---------- world done ----------
 def tc(x,y):
     return(x*f+sx,y*f+sy)
