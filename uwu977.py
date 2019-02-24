@@ -68,9 +68,10 @@ bb=1
 seehome = 0
 player = pg.sprite.Group()
 try:
-    world = np.loadtxt("world")
-    homeX = 0
-    homeY = 0
+    s = np.load("world.npz")
+    world = s['world']
+    homeX = s['home'][0]
+    homeY = s['home'][1]
     worldWidth = world.shape[1]
     worldHeight = world.shape[0]
     iGround = 5
@@ -95,9 +96,9 @@ except:
     x = np.random.randint(0, worldWidth, size=nDiamond)
     y = np.random.randint(iGround + 1, worldHeight, size=nDiamond)
     world[y,x] = 2
-## where crazy hat has her home:
-homeX = int(worldWidth/2)
-homeY = max(iGround - 1, 0)
+    ## where crazy hat has her home:
+    homeX = int(worldWidth/2)
+    homeY = max(iGround - 1, 0)
 ## Draw the world
 for x in range(world.shape[0]):
     for y in range(world.shape[1]):
@@ -183,7 +184,9 @@ while do:
             elif event.key == pg.K_x:
                 seehome = 1-seehome
             elif event.key == pg.K_z:
-                np.savetxt("world",world)
+                np.savez_compressed("world",
+                                    world=world,
+                                    home = np.array([homeX, homeY]))
         elif event.type == pg.KEYUP:
             if event.key == pg.K_UP:
                 mup = False
