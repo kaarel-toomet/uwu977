@@ -109,6 +109,7 @@ class Player(pg.sprite.Sprite):
     def getxy(self):
         return(self.x,self.y)
 def reset():
+    global hullmyts
     lifes = 5
     player.empty()
     hullmyts = Player(homeX, homeY)
@@ -116,9 +117,8 @@ def reset():
 hullmyts = Player(homeX, homeY)
 player.add(hullmyts)
 def build(x,y):
-    s=world.shape
-    if x>=0 and y>=0 and x<s[1] and y<s[0]:
-        world[x,y] = 1
+    if x>=0 and y>=0 and x<worldWidth and y<worldHeight:
+        world[y,x] = 1
 while do:
     for event in pg.event.get():
         if event.type == pg.QUIT:
@@ -133,13 +133,13 @@ while do:
             elif event.key == pg.K_RIGHT:
                 mright = True
             elif event.key == pg.K_a:
-                build(hullmyts.getxy()[1],hullmyts.getxy()[0]-1)
+                build(hullmyts.getxy()[0]-1,hullmyts.getxy()[1])
             elif event.key == pg.K_s:
-                build(hullmyts.getxy()[1]+1,hullmyts.getxy()[0])
+                build(hullmyts.getxy()[0],hullmyts.getxy()[1]+1)
             elif event.key == pg.K_d:
-                build(hullmyts.getxy()[1],hullmyts.getxy()[0]+1)
+                build(hullmyts.getxy()[0]+1,hullmyts.getxy()[1])
             elif event.key == pg.K_w:
-                build(hullmyts.getxy()[1]-1,hullmyts.getxy()[0])
+                build(hullmyts.getxy()[0],hullmyts.getxy()[1]-1)
             elif event.key == pg.K_p:
                 pause = True
             elif event.key == pg.K_r:
