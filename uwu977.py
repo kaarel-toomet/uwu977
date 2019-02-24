@@ -99,6 +99,10 @@ def reset():
     player.add(hullmyts)
 hullmyts = Player(0,0)
 player.add(hullmyts)
+def build(x,y):
+    s=world.shape
+    if x>=0 and y>=0 and x<s[1] and y<s[0]:
+        world[x,y] = 1
 while do:
     for event in pg.event.get():
         if event.type == pg.QUIT:
@@ -112,6 +116,14 @@ while do:
                 mleft = True
             elif event.key == pg.K_RIGHT:
                 mright = True
+            elif event.key == pg.K_a:
+                build(hullmyts.getxy()[1],hullmyts.getxy()[0]-1)
+            elif event.key == pg.K_s:
+                build(hullmyts.getxy()[1]+1,hullmyts.getxy()[0])
+            elif event.key == pg.K_d:
+                build(hullmyts.getxy()[1],hullmyts.getxy()[0]+1)
+            elif event.key == pg.K_w:
+                build(hullmyts.getxy()[1]-1,hullmyts.getxy()[0])
             elif event.key == pg.K_p:
                 pause = True
             elif event.key == pg.K_r:
