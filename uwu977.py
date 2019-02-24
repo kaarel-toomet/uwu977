@@ -135,6 +135,7 @@ def reset():
     player.add(hullmyts)
 def build(x,y):
     global bb
+    print("build")
     if x>=0 and y>=0 and x<worldWidth and y<worldHeight:
         world[y,x] = bb
 reset()
