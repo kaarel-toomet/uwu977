@@ -1,0 +1,9 @@
+# save worlds
+*.npz
+
+# backups
+*~
+
+# python temp
+__pycache__
+
