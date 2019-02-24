@@ -44,7 +44,7 @@ screenw = screen.get_width()
 screenh = screen.get_height()
 ##
 pg.display.set_caption("movepic")
-screenBuffer = pg.Surface(size=(screenw, screenh))
+screenBuffer = pg.Surface(size=(3*screenw, 3*screenh))
 screenBuffer.fill(bgColor)
 # this is the buffer where movement-related drawing is done,
 # afterwards it is copied to the screen
