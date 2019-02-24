@@ -4,8 +4,6 @@ import random as r
 import numpy as np
 pg.init()
 pg.mixer.init()
-i = pg.display.Info()
-print(i.current_w, i.current_h)
 f=64
 pic = pg.transform.scale(pg.image.load("pic.png"),(f,f))
 block = pg.transform.scale(pg.image.load("asdfblock.png"),(f,f))
@@ -37,19 +35,13 @@ sy=screenh/2
 player = pg.sprite.Group()
 ## ---------- Build the world ----------
 ## variables
-worldWidth = 15
-worldHeight = 8
+worldWidth = 18
+worldHeight = 7
 groundLevel = 0.5
 # in fraction, from bottom.  0.3 means bottom 30%
 ## sanity check
-if worldHeight < 2:
-    worldHeight = 2
-if worldWidth < 2:
-    worldWidth = 2
-if worldHeight > 500:
-    worldHeight = 1000
-if worldWidth > 2000:
-    worldHeight = 2000
+worldHeight = min(max(worldHeight, 2), 400)
+worldWidth = min(max(worldWidth, 2), 2000)
 if groundLevel < 0:
     groundLevel = 0
 if groundLevel > 1:
@@ -58,8 +50,8 @@ world = np.zeros((worldHeight, worldWidth), 'int8')
 iGround = int((1 - groundLevel)*worldHeight)
 world[iGround:] = 1
 ## where crzy hat has her home:
-homeX = max(iGround - 1, 0)
-homeY = int(worldWidth/2)
+homeX = int(worldWidth/2)
+homeY = max(iGround - 1, 0)
 ## ---------- world done ----------
 def tc(x,y):
     return(x*f+sx,y*f+sy)
@@ -104,9 +96,9 @@ class Player(pg.sprite.Sprite):
 def reset():
     lifes = 5
     player.empty()
-    hullmyts = Player(0,0)
+    hullmyts = Player(homeX, homeY)
     player.add(hullmyts)
-hullmyts = Player(0,0)
+hullmyts = Player(homeX, homeY)
 player.add(hullmyts)
 while do:
     for event in pg.event.get():
