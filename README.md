@@ -21,12 +21,16 @@ one of the saved worlds, or press 'cancel' to create a new one.
 Keyboard:
 
 * arrow keys to move
-* **A**, **S**, **D**, **W** to build left, down, right, up
+* **A**, **S**, **D**, **W** to build left, down, right, up\
+* **J**, **K**, **L**, **I** to break left, down, right, up\
+* C to break backgrounds
 * P to pause
 * H to set home
 * R to return home
 * [ or ] to change build block
 * X to toggle home visibility
+* T to return to title
+* G to change gamemode
 * **Z** to save world file.  It opens a dialog to ask for file name to
   save.  Normally you want to save in a '.npz' file (numpy compressed
   matrices).

@@ -8,7 +8,7 @@ import blocks
 import files
 
 ## Command line arguments
-parser = argparse.ArgumentParser(description='UWU977: Crazy Hat builds a world!')
+parser = argparse.ArgumentParser(description='uwu977: Crazy Hat builds a world!')
 parser.add_argument('-v', type=int, default=0,
                     help='verbosity level')
 parser.add_argument('-x', '--width', type=int, default=64,
@@ -73,6 +73,7 @@ seehome = 0
 gmod = 0
 gmods = {0:"creative",1:"survival"}
 items = {0:923, 1:5, 2:0, 3:0, 4:0, 5:0, 6:0, 7:0, 8:0, 9:0, 10:0, 11:0}
+
 player = pg.sprite.Group()
 ##
 s = files.loadWorld()
@@ -82,6 +83,7 @@ if s is not None:
     homeY = s['home'][1]
     worldWidth = world.shape[1]
     worldHeight = world.shape[0]
+    items = {x[0]:x[1] for x in s["stuff"]}
 else:
     ## ---------- Build the world ----------
     ## variables
@@ -245,8 +247,8 @@ while do:
             elif event.key == pg.K_x:
                 seehome = 1-seehome
             elif event.key == pg.K_z:
-                files.saveWorld(world, (homeX, homeY))
-            elif event.key == pg.K_c and not world[hullmyts.getxy()[1],hullmyts.getxy()[0]] in blocks.breakable:
+                files.saveWorld(world, (homeX, homeY), items)
+            elif event.key == pg.K_c and (not world[hullmyts.getxy()[1],hullmyts.getxy()[0]] in blocks.breakable):
                 xy=hullmyts.getxy()
                 items[world[xy[1],xy[0]]] += 1
                 world[xy[1],xy[0]] = 0
