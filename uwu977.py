@@ -16,9 +16,6 @@ parser.add_argument('-y', '--height', type=int, default=10,
                     help='world height (tiles)')
 args = parser.parse_args()
 
-## ---------- initialize ----------
-pg.init()
-pg.mixer.init()
 ## ---------- blocks ----------
 f=64
 # block size on screen
@@ -29,12 +26,28 @@ rblock = pg.transform.scale(pg.image.load("redblock.png"),(f,f))
 sky = pg.transform.scale(pg.image.load("sky.png"),(f,f))
 ground = pg.transform.scale(pg.image.load("ground.png"),(f,f))
 blocks = { 0:sky, 1:block, 2:rblock, 3:ground }
-##    
+##
+bgColor = (64,64,64)
+# dark gray
+## coordinate transformation for the buffer
+def tc(x,y):
+    return(x*f, y*f)
+## coordnate transformation for the actual screen
+def screenCoords(x, y):
+    return(sx + x*f, sy + y*f)
+## ---------- initialize ----------
+pg.init()
+pg.mixer.init()
 pg.font
 screen = pg.display.set_mode((0,0), pg.RESIZABLE)
 screenw = screen.get_width()
 screenh = screen.get_height()
+##
 pg.display.set_caption("movepic")
+screenBuffer = pg.Surface(size=(3*screenw, 3*screenh))
+screenBuffer.fill(bgColor)
+# this is the buffer where movement-related drawing is done,
+# afterwards it is copied to the screen
 do = True
 dist = 1
 actuallyuselessvariable = 39
@@ -53,8 +66,6 @@ dfont = pg.font.SysFont("Times", 32)
 pfont = pg.font.SysFont("Times", 50)
 pause = False
 gameover = False
-sx=screenw/2
-sy=screenh/2
 bb=1
 player = pg.sprite.Group()
 ## ---------- Build the world ----------
@@ -66,10 +77,7 @@ groundLevel = 0.5
 ## sanity check
 worldHeight = min(max(worldHeight, 2), 400)
 worldWidth = min(max(worldWidth, 2), 2000)
-if groundLevel < 0:
-    groundLevel = 0
-if groundLevel > 1:
-    groundLevel = 1.0
+groundLevel = min(max(groundLevel, 0.0), 1.0)
 world = np.zeros((worldHeight, worldWidth), 'int8')
 iGround = int((1 - groundLevel)*worldHeight)
 world[iGround] = 3
@@ -83,9 +91,17 @@ world[y,x] = 2
 ## where carzy hat has her home:
 homeX = int(worldWidth/2)
 homeY = max(iGround - 1, 0)
+## Draw the world
+for x in range(world.shape[0]):
+    for y in range(world.shape[1]):
+        screenBuffer.blit( blocks[ world[x,y] ], tc(y, x))
+## ---------- world-screen coordinate translation ----------
+## upper left corner of the world will be drawn at (sx, sy) on screen.
+## This will be done when copying the screen buffer on screen
+sx = screenw/2 - worldWidth*f/2
+sy = screenh/2 - worldHeight*f/2
+
 ## ---------- world done ----------
-def tc(x,y):
-    return(x*f+sx,y*f+sy)
 class Player(pg.sprite.Sprite):
     def __init__(self,x,y):
         pg.sprite.Sprite.__init__(self)
@@ -93,35 +109,22 @@ class Player(pg.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.x=x
         self.y=y
-        self.rect.x = tc(x,y)[0]
-        self.rect.y = tc(x,y)[1]
+        self.rect.x, self.rect.y = screenCoords(x, y)
     def update(self, mup, mdown, mleft, mright):
-        global sx,sy,f
-        d=0
-        r=0
+        global sx, sy, world
         if mup:
-            d=-1
+            self.y = max(self.y - 1, 0)
         if mdown:
-            d=-1
-        if mdown:
-            d=1
+            self.y = min(self.y + 1, worldHeight - 1)
         if mleft:
-            r=-1
+            self.x = max(self.x - 1, 0)
         if mright:
-            r=1
-        self.x+=r
-        self.y+=d
-        if self.x<0 or self.y<0 or self.x >= worldWidth or self.y >= worldHeight: # or world[self.y,self.x]==1:
-            self.x-=r
-            self.y-=d
+            self.x = min(self.x + 1, worldWidth - 1)
         world[self.y,self.x] = 0
-            #self.x-=r
-            #self.y-=d
-        #print(self.x, self.y)
+        screenBuffer.blit( blocks[0], tc(self.x, self.y))
         sx = screenw/2-hullmyts.getxy()[0]*f
         sy = screenh/2-hullmyts.getxy()[1]*f
-        self.rect.x = tc(self.x,self.y)[0]
-        self.rect.y = tc(self.x,self.y)[1]
+        self.rect.x, self.rect.y = screenCoords(self.x, self.y)
     def getxy(self):
         return(self.x,self.y)
 def reset():
@@ -130,12 +133,13 @@ def reset():
     player.empty()
     hullmyts = Player(homeX, homeY)
     player.add(hullmyts)
-hullmyts = Player(homeX, homeY)
-player.add(hullmyts)
 def build(x,y):
     global bb
     if x>=0 and y>=0 and x<worldWidth and y<worldHeight:
         world[y,x] = bb
+        screenBuffer.blit( blocks[bb], tc(x, y))
+# initialize player        
+reset()
 while do:
     for event in pg.event.get():
         if event.type == pg.QUIT:
@@ -185,14 +189,14 @@ while do:
             elif event.type == pg.KEYDOWN:
                 if event.key == pg.K_p:
                     pause = False
-        pd = "PAUSED"
-        ptext = dfont.render(pd, True, (127,127,127))
-        ptext_rect = ptext.get_rect()
-        ptext_rect.centerx = screen.get_rect().centerx
-        ptext_rect.y = 50
-        screen.blit(ptext,ptext_rect)
-        screen.blit(text,text_rect)
-        pg.display.update()
+                    pd = "PAUSED"
+                    ptext = dfont.render(pd, True, (127,127,127))
+                    ptext_rect = ptext.get_rect()
+                    ptext_rect.centerx = screen.get_rect().centerx
+                    ptext_rect.y = 50
+                    screen.blit(ptext,ptext_rect)
+                    screen.blit(text,text_rect)
+                    pg.display.update()
     if lifes == 0:
         uded = "GAME OVER"
         dtext = dfont.render(uded, True, (255,0,0))
@@ -212,21 +216,21 @@ while do:
                 if event.key == pg.K_r:
                     gameover = False
                     reset()
-    screen.fill((64,64,64))
+                    ## ---------- screen udpate ----------
+    screen.fill(bgColor)
+    screen.blit(screenBuffer, (sx,sy))
+    screen.blit(home, screenCoords(homeX,homeY))
     score = ("Lifes: " + str(lifes))
     text = font.render(score, True, (255,255,255))
     text_rect = text.get_rect()
     text_rect.centerx = screen.get_rect().centerx
     text_rect.y = 10
     screen.blit(text,text_rect)
-    for x in range(world.shape[0]):
-        for y in range(world.shape[1]):
-            screen.blit( blocks[ world[x,y] ], tc(y, x))
-
-    screen.blit(home,tc(homeX,homeY))
+    ##
     player.update(mup,mdown, mleft, mright)
     player.draw(screen)
     pg.display.update()
+    ##
     mup = False
     mdown = False
     mleft = False
