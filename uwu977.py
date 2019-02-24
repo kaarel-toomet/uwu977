@@ -4,6 +4,8 @@ import pygame as pg
 import random as r
 import numpy as np
 
+import blocks
+
 ## Command line arguments
 parser = argparse.ArgumentParser(description='UWU977: Crazy Hat builds a world!')
 parser.add_argument('-v', type=int, default=0,
@@ -19,13 +21,9 @@ args = parser.parse_args()
 ## ---------- blocks ----------
 f=64
 # block size on screen
+blocks.loadBlocks(f)
 pic = pg.transform.scale(pg.image.load("pic.png"),(f,f))
 home = pg.transform.scale(pg.image.load("home.png"),(f,f))
-block = pg.transform.scale(pg.image.load("asdfblock.png"),(f,f))
-rblock = pg.transform.scale(pg.image.load("redblock.png"),(f,f))
-sky = pg.transform.scale(pg.image.load("sky.png"),(f,f))
-ground = pg.transform.scale(pg.image.load("ground.png"),(f,f))
-blocks = { 0:sky, 1:block, 2:rblock, 3:ground }
 ##
 bgColor = (64,64,64)
 # dark gray
@@ -67,7 +65,6 @@ pfont = pg.font.SysFont("Times", 50)
 pause = False
 gameover = False
 bb=1
-bn={0:"air",1:"asdf",2:"redstuff",3:"ground"}
 seehome = 0
 player = pg.sprite.Group()
 ## ---------- Build the world ----------
@@ -96,7 +93,7 @@ homeY = max(iGround - 1, 0)
 ## Draw the world
 for x in range(world.shape[0]):
     for y in range(world.shape[1]):
-        screenBuffer.blit( blocks[ world[x,y] ], tc(y, x))
+        screenBuffer.blit( blocks.blocks[ world[x,y] ], tc(y, x))
 ## ---------- world-screen coordinate translation ----------
 ## upper left corner of the world will be drawn at (sx, sy) on screen.
 ## This will be done when copying the screen buffer on screen
@@ -123,7 +120,7 @@ class Player(pg.sprite.Sprite):
         if mright:
             self.x = min(self.x + 1, worldWidth - 1)
         world[self.y,self.x] = 0
-        screenBuffer.blit( blocks[0], tc(self.x, self.y))
+        screenBuffer.blit( blocks.blocks[0], tc(self.x, self.y))
         sx = screenw/2-hullmyts.getxy()[0]*f
         sy = screenh/2-hullmyts.getxy()[1]*f
         self.rect.x, self.rect.y = screenCoords(self.x, self.y)
@@ -139,7 +136,7 @@ def build(x,y):
     global bb
     if x>=0 and y>=0 and x<worldWidth and y<worldHeight:
         world[y,x] = bb
-        screenBuffer.blit( blocks[bb], tc(x, y))
+        screenBuffer.blit( blocks.blocks[bb], tc(x, y))
 # initialize player        
 reset()
 while do:
@@ -225,7 +222,7 @@ while do:
     screen.blit(screenBuffer, (sx,sy))
     if seehome == 1:
         screen.blit(home, screenCoords(homeX,homeY))
-    score = ("Block: " + bn[bb])
+    score = ("Block: " + blocks.bn[bb])
     text = font.render(score, True, (255,255,255))
     text_rect = text.get_rect()
     text_rect.centerx = screen.get_rect().centerx
