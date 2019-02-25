@@ -15,13 +15,15 @@ WINDOW = 10
 GORE=11
 SINF = 12
 INFB = 13
-BLOCK_END = 13
+CDOOR = 14
+ODOOR = 15
+BLOCK_END = 15
 
-breakable = set([BLOCK, RBLOCK, GROUND, PEBBL, CORE, GOLD, GORE, SINF])
+breakable = set([BLOCK, RBLOCK, GROUND, PEBBL, CORE, GOLD, GORE, SINF, CDOOR])
 breakto = {SKY:SKY, BLOCK:BACKG, RBLOCK:SKY, GROUND:BACKG,
            BACKG:BACKG, PEBBL:STNBACK, CORE:STNBACK, STNBACK:STNBACK,
            GOLD:SKY, GWALL:GWALL, WINDOW:WINDOW, GORE:STNBACK,
-           SINF:INFB, INFB:INFB}
+           SINF:INFB, INFB:INFB, CDOOR:ODOOR, ODOOR:CDOOR}
 
 blocks = {}
 # initialize empty dictionary, to be filled with loadBlocks
@@ -57,13 +59,18 @@ def loadBlocks(size):
                                 (size, size))
     inf = pg.transform.scale(pg.image.load("infinity.png"),
                                 (size, size))
+    cdoor = pg.transform.scale(pg.image.load("cdoor.png"),
+                                (size, size))
+    odoor = pg.transform.scale(pg.image.load("odoor.png"),
+                                (size, size))
     ## set up the blocks dictionary
     blocks = { SKY:sky, BLOCK:block, RBLOCK:rblock, GROUND:ground,
                BACKG:backg, PEBBL:pebbl, CORE:core, STNBACK:stnback,
-                GOLD:gold, GWALL:gwall, WINDOW:window, GORE:gore, SINF:inf, INFB:inf}
+               GOLD:gold, GWALL:gwall, WINDOW:window, GORE:gore,
+               SINF:inf, INFB:inf, CDOOR:cdoor, ODOOR:odoor}
     bn={SKY:"sky",BLOCK:"asdf",RBLOCK:"redstuff",
         GROUND:"ground",BACKG:"asdf background",
         PEBBL:"stone",CORE:"coal ore",STNBACK:"stone background",
         GOLD:"gold block",GWALL:"golden wall",WINDOW:"window",GORE:"gold ore",
-        SINF:"infinity wall",INFB:"infinity background"}
+        SINF:"infinity wall",INFB:"infinity background",CDOOR:"closed door",ODOOR:"open door"}
 

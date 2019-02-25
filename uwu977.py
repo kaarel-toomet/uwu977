@@ -72,7 +72,7 @@ bb=1
 seehome = 0
 gmod = 0
 gmods = {0:"creative",1:"survival"}
-items = {0:21, 1:5, 2:0, 3:0, 4:0, 5:0, 6:0, 7:0, 8:0, 9:0, 10:0, 11:0, 12:0, 13:0}
+items = {0:21, 1:5, 2:0, 3:0, 4:0, 5:0, 6:0, 7:0, 8:0, 9:0, 10:0, 11:0, 12:0, 13:0, 14:0, 15:0}
 
 player = pg.sprite.Group()
 ##
@@ -109,7 +109,7 @@ else:
     x = np.random.randint(0, worldWidth, size=nGold)
     y = np.random.randint(iGround + 1, worldHeight, size=nGold)
     world[y,x] = 11
-    ## where crazy hat has her home:
+    ## where crzy hat has her home:
     homeX = int(worldWidth/2)
     homeY = max(iGround - 1, 0)
 ## Draw the world
@@ -179,8 +179,8 @@ def build(x,y):
 def destroy(x,y):
     if x>=0 and y>=0 and x<worldWidth and y<worldHeight:
         items[world[y,x]] += 1
-        world[y,x] = blocks.breakto[world[y,x]]
         screenBuffer.blit( blocks.blocks[blocks.breakto[world[y,x]]], tc(x, y))
+        world[y,x] = blocks.breakto[world[y,x]]
 # initialize player        
 reset()
                 
