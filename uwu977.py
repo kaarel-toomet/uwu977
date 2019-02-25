@@ -72,7 +72,7 @@ bb=1
 seehome = 0
 gmod = 0
 gmods = {0:"creative",1:"survival"}
-items = {0:923, 1:5, 2:0, 3:0, 4:0, 5:0, 6:0, 7:0, 8:0, 9:0, 10:0, 11:0}
+items = {0:21, 1:5, 2:0, 3:0, 4:0, 5:0, 6:0, 7:0, 8:0, 9:0, 10:0, 11:0, 12:0, 13:0}
 
 player = pg.sprite.Group()
 ##
@@ -240,7 +240,7 @@ while do:
             elif event.key == pg.K_h:
                 homeX = hullmyts.getxy()[0]
                 homeY = hullmyts.getxy()[1]
-            elif event.key == pg.K_RIGHTBRACKET and bb < 11:
+            elif event.key == pg.K_RIGHTBRACKET and bb < blocks.BLOCK_END:
                 bb += 1
             elif event.key == pg.K_LEFTBRACKET and bb > 1:
                 bb -= 1
