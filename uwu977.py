@@ -69,7 +69,7 @@ tfont = pg.font.SysFont("Times",100)
 pause = False
 gameover = False
 bb=1
-seehome = 0
+seehome = 1
 gmod = 0
 gmods = {0:"creative",1:"survival"}
 items = {0:21, 1:5, 2:0, 3:0, 4:0, 5:0, 6:0, 7:0, 8:0, 9:0, 10:0, 11:0, 12:0, 13:0, 14:0, 15:0}
@@ -215,15 +215,7 @@ while do:
         if event.type == pg.QUIT:
             do = False
         elif event.type == pg.KEYDOWN:
-            if event.key == pg.K_UP:
-                mup = True  #useless comment
-            elif event.key == pg.K_DOWN:
-                mdown = True
-            elif event.key == pg.K_LEFT:
-                mleft = True
-            elif event.key == pg.K_RIGHT:
-                mright = True
-            elif event.key == pg.K_a:
+            if event.key == pg.K_a:
                 build(hullmyts.getxy()[0]-1,hullmyts.getxy()[1])
             elif event.key == pg.K_s:
                 build(hullmyts.getxy()[0],hullmyts.getxy()[1]+1)
@@ -239,6 +231,14 @@ while do:
                 destroy(hullmyts.getxy()[0]+1,hullmyts.getxy()[1])
             elif event.key == pg.K_i:
                 destroy(hullmyts.getxy()[0],hullmyts.getxy()[1]-1)
+            elif event.key == pg.K_UP:
+                mup = True  #useless comment
+            elif event.key == pg.K_DOWN:
+                mdown = True
+            elif event.key == pg.K_LEFT:
+                mleft = True
+            elif event.key == pg.K_RIGHT:
+                mright = True
             elif event.key == pg.K_p:
                 pause = True
             elif event.key == pg.K_r:
