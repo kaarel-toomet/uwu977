@@ -3,6 +3,8 @@ import argparse
 import pygame as pg
 import random as r
 import numpy as np
+import sys
+import subprocess
 
 import blocks
 import files
@@ -22,6 +24,32 @@ args = parser.parse_args()
 ## ---------- blocks ----------
 f=64
 # block size on screen
+pg.init()
+
+## figure out the screen size
+## The standard get_size() gives wrong results on multi-monitor setup
+## use xrandr instead (only on linux)
+xdotool = False
+# did we get the data through xdotool?
+if sys.platform == 'linux':
+    res = subprocess.run("./activescreen", stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    if(res.returncode == 0):
+        # success
+        wh = res.stdout.split(b' ')
+        screenw = int(wh[0])
+        screenh = int(wh[1])
+        screen = pg.display.set_mode((screenw, screenh), pg.RESIZABLE)
+        xdotool = True
+if not xdotool:
+    screen = pg.display.set_mode((0,0), pg.RESIZABLE)
+    screenw, screenh = pg.display.get_surface().get_size()
+pg.display.set_caption(str(r.randint(0,9000)))
+pg.mixer.init()
+screen = pg.display.set_mode((0,0), pg.RESIZABLE)
+screenw = screen.get_width()
+screenh = screen.get_height()
+
+## load config and all that
 blocks.loadBlocks(f)
 pic = pg.transform.scale(pg.image.load("pic.png"),(f,f))
 home = pg.transform.scale(pg.image.load("home.png"),(f,f))
@@ -35,15 +63,7 @@ def tc(x,y):
 ## coordnate transformation for the actual screen
 def screenCoords(x, y):
     return(sx + x*f, sy + y*f)
-## ---------- initialize ----------
-pg.init()
-pg.mixer.init()
-pg.font
-screen = pg.display.set_mode((0,0), pg.RESIZABLE)
-screenw = screen.get_width()
-screenh = screen.get_height()
 ##
-pg.display.set_caption(str(r.randint(0,9000)))
 screenBuffer = pg.Surface(size=(4*screenw, 4*screenh))
 screenBuffer.fill(bgColor)
 # this is the buffer where movement-related drawing is done,
